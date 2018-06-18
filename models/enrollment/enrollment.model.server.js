@@ -16,7 +16,11 @@ function findSectionsForStudent(studentId) {
     .exec();
 }
 
+function deleteEnrollment(studentId, sectionId){
+  return enrollmentModel.deleteOne({'student': studentId, 'section':sectionId})
+}
 module.exports = {
   enrollStudentInSection: enrollStudentInSection,
-  findSectionsForStudent: findSectionsForStudent
+  findSectionsForStudent: findSectionsForStudent,
+  deleteEnrollment: deleteEnrollment
 };
