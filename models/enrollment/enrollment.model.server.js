@@ -9,6 +9,7 @@ function enrollStudentInSection(enrollment) {
   return enrollmentModel.create(enrollment);
 }
 
+
 function findSectionsForStudent(studentId) {
   return enrollmentModel
     .find({student: studentId})
@@ -16,11 +17,21 @@ function findSectionsForStudent(studentId) {
     .exec();
 }
 
-function deleteEnrollment(studentId, sectionId){
+function deleteEnrollmentById(studentId, sectionId){
   return enrollmentModel.deleteOne({'student': studentId, 'section':sectionId})
+}
+
+function deleteEnrollmentsBySectionId(sectionId){
+  return enrollmentModel.deleteOne({'section': sectionId})
+}
+
+function deleteEnrollmentsByUserId(userId){
+  return enrollmentModel.deleteOne({'student': userId})
 }
 module.exports = {
   enrollStudentInSection: enrollStudentInSection,
   findSectionsForStudent: findSectionsForStudent,
-  deleteEnrollment: deleteEnrollment
+  deleteEnrollmentById: deleteEnrollmentById,
+  deleteEnrollmentsBySectionId:  deleteEnrollmentsBySectionId,
+  deleteEnrollmentsByUserId: deleteEnrollmentsByUserId
 };

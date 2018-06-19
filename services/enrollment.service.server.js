@@ -1,16 +1,15 @@
 module.exports = function (app) {
-  app.post('/api/section/:sectionId/enrollment', enrollStudentInSection);
-  app.get('/api/student/section', findSectionsForStudent);
-  app.delete('/api/student/:sid/section/:kid', deleteEnrollment);
+  app.post('/api/student/:sid/section/:kid/enroll', enrollStudentInSection);
+  app.get('/api/student/:sid/section', findSectionsForStudent);
+  app.delete('/api/student/:sid/section/:kid', deleteEnrollmentById);
 
 
   var sectionModel = require('../models/section/section.model.server');
   var enrollmentModel = require('../models/enrollment/enrollment.model.server');
 
   function enrollStudentInSection(req, res) {
-    var sectionId = req.params['sectionId'];
-    var currentUser = req.session.currentUser;
-    var studentId = currentUser._id;
+    var sectionId = req.params['kid'];
+    var studentId = req.params['sid'];
     var enrollment = {
       student: studentId,
       section: sectionId
@@ -37,15 +36,21 @@ module.exports = function (app) {
 
   }
 
-  function deleteEnrollment(req,res){
-    var sectionId = req.params['sid'];
-    var studentId
-    enrollmentModel.deleteEnrollment(req.s)
+  function deleteEnrollmentById(req,res){
+    var studentId = req.params['sid'];
+    var sectionId = req.params['kid'];
+    enrollmentModel.deleteEnrollmentById(studentId,sectionId).then(function(enrollment) {
+      sectionModel
+          .incrementSectionSeats(sectionId)
+          .then(function (enrollment) {
+            res.json(enrollment);
+          })
+    });
+
   }
 
   function findSectionsForStudent(req, res) {
-    var currentUser = req.session.currentUser;
-    var studentId = currentUser._id;
+    var studentId = req.params['sid'];
     enrollmentModel
         .findSectionsForStudent(studentId)
         .then(function(enrollments) {

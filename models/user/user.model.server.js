@@ -6,6 +6,9 @@ function findUserByCredentials(credentials) {
   return userModel.findOne(credentials).select("-password");
 }
 
+function findUserByUsername(username){
+  return userModel.findOne({'username':username}).select("-password");
+}
 function findUserById(userId) {
   return userModel.findOne({_id: userId});
 }
@@ -23,11 +26,11 @@ function updateUser(user, userId){
       {
         _id: userId
       },
+      {$set:
       {
         firstName: user.firstName,
-        lastName: user.lastName,
-        password: user.password
-      }
+        lastName: user.lastName
+      }}
   )
 }
 
@@ -40,7 +43,8 @@ var api = {
   findAllUsers: findAllUsers,
   findUserById: findUserById,
   updateUser: updateUser,
-  findUserByCredentials: findUserByCredentials
+  findUserByCredentials: findUserByCredentials,
+  findUserByUsername:findUserByUsername
 };
 
 module.exports = api;

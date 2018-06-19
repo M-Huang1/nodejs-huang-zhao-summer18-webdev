@@ -7,17 +7,23 @@ module.exports = function (app) {
   app.delete('/api/profile', deleteUser);
   app.post('/api/logout', logout);
   app.post('/api/login', login);
+  app.get('/api/username/:username', findUserByUsername);
 
   var userModel = require('../models/user/user.model.server');
+  var enrollmentModel = require('../models/enrollment/enrollment.model.server')
 
   function login(req, res) {
     var credentials = req.body;
     userModel
       .findUserByCredentials(credentials)
       .then(function(user) {
-        req.session['currentUser'] = user;
-        console.log(req.session['currentUser']._id);
-        res.json(user);
+        if(user === null) {
+          res.json(user);
+        }
+        else{
+          req.session['currentUser'] = user;
+          res.json(user);
+        }
       })
   }
 
@@ -26,6 +32,19 @@ module.exports = function (app) {
     res.send(200);
   }
 
+  function findUserByUsername(req, res){
+    var username = req.params['username'];
+    userModel.findUserByUsername(username)
+        .then(function(user){
+           if(user === null){
+             res.status(404);
+             res.json(user);
+           }
+           else {
+             res.json(user);
+           }
+        })
+  }
   function findUserById(req, res) {
     var id = req.params['userId'];
     userModel.findUserById(id)
@@ -48,7 +67,10 @@ module.exports = function (app) {
   function deleteUser(req, res){
     userModel.deleteUser(req.session['currentUser']._id)
         .then(function(){
-          res.send(200);
+          enrollmentModel.deleteEnrollmentsByUserId(req.session['currentUser']._id)
+              .then(function(){
+                res.send(200);
+              })
         })
   }
   function createUser(req, res) {
@@ -66,4 +88,4 @@ module.exports = function (app) {
         res.send(users);
       })
   }
-}
+};
