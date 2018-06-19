@@ -54,7 +54,7 @@ module.exports = function (app) {
   }
 
   function profile(req, res) {
-    res.send(req.session['currentUser']);
+    res.json((req.session['currentUser']));
   }
 
   function updateProfile(req, res) {
