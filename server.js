@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin",
-    "*");
+    "https://webdev-huang-angular-s18.herokuapp.com");
   res.header("Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Methods",
@@ -62,4 +62,5 @@ function getSession(req, res) {
 require('./services/user.service.server')(app);
 require('./services/section.service.server')(app);
 require('./services/enrollment.service.server')(app);
+
 app.listen(process.env.PORT || port);
